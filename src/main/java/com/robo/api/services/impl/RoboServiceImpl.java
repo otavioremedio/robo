@@ -16,7 +16,7 @@ public class RoboServiceImpl implements RoboService {
 	public Response moverRobo(Response response) {
 
 		if(!validaComando(((MovimentoDto)response.getData()).getComando())){
-			response.getErros().add("Comando inválido. Digite no máximo 4 movimentos sequenciais e no máximo 2 rotações sequenciais.");
+			response.getErros().add("Comando inválido. Digite no máximo 4 movimentos sequenciais (M) e no máximo 2 rotações sequenciais (L ou R).");
 		} else {
 			response = realizaMovimento(response);
 		}

@@ -47,7 +47,7 @@ public class RoboControllerTest {
 		mvc.perform(MockMvcRequestBuilders.post(ENVIAR_COMANDO + COMANDO_INVALIDO).accept(MediaType.APPLICATION_JSON))
 			.andDo(print())
 			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.erros").value("Comando inválido. Digite no máximo 4 movimentos sequenciais e no máximo 2 rotações sequenciais."));
+			.andExpect(jsonPath("$.erros").value("Comando inválido. Digite no máximo 4 movimentos sequenciais (M) e no máximo 2 rotações sequenciais (L ou R)."));
 	}
 
 	@Test
