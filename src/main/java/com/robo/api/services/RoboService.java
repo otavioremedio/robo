@@ -1,8 +1,8 @@
 package com.robo.api.services;
 
-import com.robo.api.entities.Posicao;
+import com.robo.api.response.Response;
 
 public interface RoboService {
 
-	Posicao mover(Posicao posicao);
+	Response moverRobo(Response response);
 }
