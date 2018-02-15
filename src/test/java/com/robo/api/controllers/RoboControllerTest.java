@@ -83,7 +83,7 @@ public class RoboControllerTest {
 
 	private Response obterDadosResponseComErro(){
 		Response response = new Response(new MovimentoDto());
-		response.getErros().add("Comando inválido. Digite no máximo 4 movimentos sequenciais e no máximo 2 rotações sequenciais.");
+		response.getErros().add("Comando inválido. Digite no máximo 4 movimentos sequenciais (M) e no máximo 2 rotações sequenciais (L ou R).");
 		((MovimentoDto)response.getData()).getPosicaoAtual();
 
 		return response;
