@@ -5,7 +5,6 @@ import java.util.Optional;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -43,7 +42,7 @@ public class RoboController {
 		httpSession.setAttribute("posicaoAtual", response.getData().getPosicaoAtual());
 
 		if (response.getErros().size() > 0) {
-			ResponseEntity.status(HttpStatus.BAD_REQUEST);
+			return ResponseEntity.badRequest().body(response);
 		}
 
 		return ResponseEntity.ok(response);
