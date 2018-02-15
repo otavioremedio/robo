@@ -1,5 +1,9 @@
 package com.robo.api.controllers;
 
+import java.util.Optional;
+
+import javax.servlet.http.HttpSession;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,12 +20,20 @@ import com.robo.api.response.Response;
 public class RoboController {
 	 
 	@PostMapping(value = "/{comando}")
-	public ResponseEntity<Response<PosicaoDto>> mover(@PathVariable("comando") String comando){
+	public ResponseEntity<Response<PosicaoDto>> mover(@PathVariable("comando") String comando, HttpSession httpSession){
 		
 		Response<PosicaoDto> response = new Response<PosicaoDto>();
-		
 		PosicaoDto posicaoDto = new PosicaoDto();
 		posicaoDto.setCoordenadas("0, 2, W");
+		
+		if (!Optional.ofNullable(httpSession.getAttribute("posicao")).isPresent()) {
+			httpSession.setAttribute("posicao", "0, 1, W");
+		} else {
+			posicaoDto.setCoordenadas(httpSession.getAttribute("posicao").toString());
+		}
+		
+		
+		
 		
 		response.setData(posicaoDto);
 		return ResponseEntity.ok(response);
