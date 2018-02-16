@@ -1,10 +1,11 @@
-package com.robo.api.dtos;
+package com.robo.api.entities;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MovimentoDto {
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 
+public class Movimento {
 	private String posicaoAtual;
 	private String comando;
 	private List<String> erros;
@@ -24,7 +25,7 @@ public class MovimentoDto {
 	public void setPosicaoAtual(String posicaoAtual) {
 		this.posicaoAtual = posicaoAtual;
 	}
-	
+
 	public List<String> getErros() {
 		if (this.erros == null) {
 			this.erros = new ArrayList<String>();
@@ -35,6 +36,4 @@ public class MovimentoDto {
 	public void setErros(List<String> erros) {
 		this.erros = erros;
 	}
-
-
 }

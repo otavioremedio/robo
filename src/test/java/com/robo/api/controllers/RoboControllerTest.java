@@ -17,8 +17,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import com.robo.api.dtos.MovimentoDto;
-import com.robo.api.response.Response;
+import com.robo.api.entities.Movimento;
 import com.robo.api.services.RoboService;
 
 @RunWith(SpringRunner.class)
@@ -42,7 +41,7 @@ public class RoboControllerTest {
 
 	@Test
 	public void testeEnviarComandoErrado() throws Exception{
-		BDDMockito.given(this.roboService.moverRobo(Mockito.any(Response.class))).willReturn(this.obterDadosResponseComErro());
+		BDDMockito.given(this.roboService.moverRobo(Mockito.any(Movimento.class))).willReturn(this.obterDadosResponseComErro());
 
 		mvc.perform(MockMvcRequestBuilders.post(ENVIAR_COMANDO + COMANDO_INVALIDO).accept(MediaType.APPLICATION_JSON))
 			.andDo(print())
@@ -52,50 +51,50 @@ public class RoboControllerTest {
 
 	@Test
 	public void testeEnviarComandoCorretoReceberLocalizacaoCorreta() throws Exception{
-		BDDMockito.given(this.roboService.moverRobo(Mockito.any(Response.class))).willReturn(this.obterDadosResponseComSucesso());
+		BDDMockito.given(this.roboService.moverRobo(Mockito.any(Movimento.class))).willReturn(this.obterDadosResponseComSucesso());
 
 		mvc.perform(MockMvcRequestBuilders.post(ENVIAR_COMANDO + COMANDO_VALIDO).accept(MediaType.APPLICATION_JSON))
 			.andDo(print())
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.erros").isEmpty())
-			.andExpect(jsonPath("$.data.posicaoAtual").value(POSICAO_ESPERADA));
+			.andExpect(jsonPath("$.posicaoAtual").value(POSICAO_ESPERADA));
 	}
 
 	@Test
 	public void testeEnviarComandoCorretoMasRoboPararDevidoFimDaArea() throws Exception{
-		BDDMockito.given(this.roboService.moverRobo(Mockito.any(Response.class))).willReturn(this.obterDadosResponseComErroDeRoboParado());
+		BDDMockito.given(this.roboService.moverRobo(Mockito.any(Movimento.class))).willReturn(this.obterDadosResponseComErroDeRoboParado());
 
 		mvc.perform(MockMvcRequestBuilders.post(ENVIAR_COMANDO + COMANDO_ROBO_PARADO).accept(MediaType.APPLICATION_JSON))
 			.andDo(print())
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.erros").value("O robo parou pois estava saindo da área permitida. O trecho final do comando (" + COMANDO_NAO_EXECUTADO + ") não foi executado."
 											   + " A posição atual do robo é " + POSICAO_ESPERADA_ROBO_PARADO))
-			.andExpect(jsonPath("$.data.posicaoAtual").value(POSICAO_ESPERADA_ROBO_PARADO));
+			.andExpect(jsonPath("$.posicaoAtual").value(POSICAO_ESPERADA_ROBO_PARADO));
 	}
 
-	private Response obterDadosResponseComSucesso(){
-		Response response = new Response(new MovimentoDto());
-		((MovimentoDto)response.getData()).setPosicaoAtual(POSICAO_ESPERADA);
+	private Movimento obterDadosResponseComSucesso(){
+		Movimento movimento = new Movimento();
+		movimento.setPosicaoAtual(POSICAO_ESPERADA);
 
-		return response;
+		return movimento;
 	}
 
 
-	private Response obterDadosResponseComErro(){
-		Response response = new Response(new MovimentoDto());
-		response.getErros().add("Comando inválido. Digite no máximo 4 movimentos sequenciais (M) e no máximo 2 rotações sequenciais (L ou R).");
-		((MovimentoDto)response.getData()).getPosicaoAtual();
+	private Movimento obterDadosResponseComErro(){
+		Movimento movimento = new Movimento();
+		movimento.getErros().add("Comando inválido. Digite no máximo 4 movimentos sequenciais (M) e no máximo 2 rotações sequenciais (L ou R).");
+		movimento.getPosicaoAtual();
 
-		return response;
+		return movimento;
 	}
 
-	private Response obterDadosResponseComErroDeRoboParado(){
-		Response response = new Response(new MovimentoDto());
-		response.getErros().add("O robo parou pois estava saindo da área permitida. O trecho final do comando (" + COMANDO_NAO_EXECUTADO + ") não foi executado."
+	private Movimento obterDadosResponseComErroDeRoboParado(){
+		Movimento movimento = new Movimento();
+		movimento.getErros().add("O robo parou pois estava saindo da área permitida. O trecho final do comando (" + COMANDO_NAO_EXECUTADO + ") não foi executado."
 										+ " A posição atual do robo é " + POSICAO_ESPERADA_ROBO_PARADO);
-		((MovimentoDto)response.getData()).setPosicaoAtual(POSICAO_ESPERADA_ROBO_PARADO);
+		movimento.setPosicaoAtual(POSICAO_ESPERADA_ROBO_PARADO);
 
-		return response;
+		return movimento;
 	}
 
 

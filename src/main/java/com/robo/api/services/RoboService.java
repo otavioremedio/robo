@@ -1,8 +1,8 @@
 package com.robo.api.services;
 
-import com.robo.api.response.Response;
+import com.robo.api.entities.Movimento;
 
 public interface RoboService {
 
-	Response moverRobo(Response response);
+	Movimento moverRobo(Movimento movimento);
 }

@@ -9,7 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.robo.api.dtos.MovimentoDto;
-import com.robo.api.response.Response;
+import com.robo.api.entities.Movimento;
 
 
 @RunWith(SpringRunner.class)
@@ -19,23 +19,17 @@ public class RoboServiceTest {
 	@Autowired
 	private RoboService roboService;
 
-	Response testeA = new Response(new MovimentoDto());
-	Response testeB = new Response(new MovimentoDto());
-	Response testeC = new Response(new MovimentoDto());
-	Response testeD = new Response(new MovimentoDto());
-
-	MovimentoDto movimentoA = (MovimentoDto)testeA.getData();
-	MovimentoDto movimentoB = (MovimentoDto)testeB.getData();
-	MovimentoDto movimentoC = (MovimentoDto)testeC.getData();
-	MovimentoDto movimentoD = (MovimentoDto)testeD.getData();
-
+	Movimento testeA = new Movimento();
+	Movimento testeB = new Movimento();
+	Movimento testeC = new Movimento();
+	Movimento testeD = new Movimento();
 
 	@Test
 	public void testeValidarComandoErrado(){
-	    ((MovimentoDto)testeA.getData()).setComando("RRRL");
-	    ((MovimentoDto)testeB.getData()).setComando("RLMMMMMM");
-	    ((MovimentoDto)testeC.getData()).setComando("MMMMMMRL");
-	    ((MovimentoDto)testeD.getData()).setComando("MMMMMMMM");
+		testeA.setComando("RRRL");
+	    testeB.setComando("RLMMMMMM");
+	    testeC.setComando("MMMMMMRL");
+	    testeD.setComando("MMMMMMMM");
 
 		testeA = this.roboService.moverRobo(testeA);
 		testeB = this.roboService.moverRobo(testeB);
@@ -52,14 +46,14 @@ public class RoboServiceTest {
 	@Test
 	public void testeValidarComandoCorreto(){
 
-		movimentoA.setComando("RMMML");
-		movimentoA.setPosicaoAtual("0,0,N");
-		movimentoB.setComando("RLMMM");
-		movimentoB.setPosicaoAtual("0,0,N");
-		movimentoC.setComando("MMM");
-		movimentoC.setPosicaoAtual("0,0,N");
-		movimentoD.setComando("MMML");
-		movimentoD.setPosicaoAtual("0,0,N");
+		testeA.setComando("RMMML");
+		testeA.setPosicaoAtual("0,0,N");
+		testeB.setComando("RLMMM");
+		testeB.setPosicaoAtual("0,0,N");
+		testeC.setComando("MMM");
+		testeC.setPosicaoAtual("0,0,N");
+		testeD.setComando("MMML");
+		testeD.setPosicaoAtual("0,0,N");
 
 		testeA = this.roboService.moverRobo(testeA);
 		testeB = this.roboService.moverRobo(testeB);
@@ -80,24 +74,24 @@ public class RoboServiceTest {
 		String posicaoEsperadaTesteC = "0,3,N";
 		String posicaoEsperadaTesteD = "0,3,W";
 
-		movimentoA.setComando("RMMML");
-		movimentoA.setPosicaoAtual("0,0,N");
-		movimentoB.setComando("RLMMM");
-		movimentoB.setPosicaoAtual("0,0,N");
-		movimentoC.setComando("MMM");
-		movimentoC.setPosicaoAtual("0,0,N");
-		movimentoD.setComando("MMML");
-		movimentoD.setPosicaoAtual("0,0,N");
+		testeA.setComando("RMMML");
+		testeA.setPosicaoAtual("0,0,N");
+		testeB.setComando("RLMMM");
+		testeB.setPosicaoAtual("0,0,N");
+		testeC.setComando("MMM");
+		testeC.setPosicaoAtual("0,0,N");
+		testeD.setComando("MMML");
+		testeD.setPosicaoAtual("0,0,N");
 
 		testeA = this.roboService.moverRobo(testeA);
 		testeB = this.roboService.moverRobo(testeB);
 		testeC = this.roboService.moverRobo(testeC);
 		testeD = this.roboService.moverRobo(testeD);
 
-		assertTrue(movimentoA.getPosicaoAtual().equals(posicaoEsperadaTesteA)
-				   && movimentoB.getPosicaoAtual().equals(posicaoEsperadaTesteB)
-				   && movimentoC.getPosicaoAtual().equals(posicaoEsperadaTesteC)
-				   && movimentoD.getPosicaoAtual().equals(posicaoEsperadaTesteD));
+		assertTrue(testeA.getPosicaoAtual().equals(posicaoEsperadaTesteA)
+				   && testeB.getPosicaoAtual().equals(posicaoEsperadaTesteB)
+				   && testeC.getPosicaoAtual().equals(posicaoEsperadaTesteC)
+				   && testeD.getPosicaoAtual().equals(posicaoEsperadaTesteD));
 
 	}
 

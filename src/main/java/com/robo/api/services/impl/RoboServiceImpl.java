@@ -5,23 +5,22 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.robo.api.dtos.MovimentoDto;
-import com.robo.api.response.Response;
+import com.robo.api.entities.Movimento;
 import com.robo.api.services.RoboService;
 
 @Service
 public class RoboServiceImpl implements RoboService {
 
 	@Override
-	public Response moverRobo(Response response) {
+	public Movimento moverRobo(Movimento movimento) {
 
-		if(!validaComando(((MovimentoDto)response.getData()).getComando())){
-			response.getErros().add("Comando inválido. Digite no máximo 4 movimentos sequenciais (M) e no máximo 2 rotações sequenciais (L ou R).");
+		if(!validaComando(movimento.getComando())){
+			movimento.getErros().add("Comando inválido. Digite no máximo 4 movimentos sequenciais (M) e no máximo 2 rotações sequenciais (L ou R).");
 		} else {
-			response = realizaMovimento(response);
+			movimento = realizaMovimento(movimento);
 		}
 
-		return response;
+		return movimento;
 	}
 
 	private boolean validaComando(String comando){
@@ -87,9 +86,8 @@ public class RoboServiceImpl implements RoboService {
 		}
 	}
 
-	private Response realizaMovimento(Response response){
+	private Movimento realizaMovimento(Movimento movimento){
 
-		MovimentoDto movimento = (MovimentoDto)response.getData();
 		Iterator<Character> comandos = movimento.getComando().chars().mapToObj(e -> (char)e).collect(Collectors.toList()).iterator();
 		Character direcaoAtual;
 		String posicaoAtual;
@@ -131,12 +129,11 @@ public class RoboServiceImpl implements RoboService {
 			} else {
 				StringBuilder comandoNaoExecutado = new StringBuilder(comando.toString());
 				comandos.forEachRemaining(comandoNaoExecutado::append);
-				response.getErros().add("O robo parou pois estava saindo da área permitida. O trecho final do comando (" + comandoNaoExecutado.toString() + ") não foi executado."
+				movimento.getErros().add("O robo parou pois estava saindo da área permitida. O trecho final do comando (" + comandoNaoExecutado.toString() + ") não foi executado."
 										+ " A posição atual do robo é " + movimento.getPosicaoAtual());
 			}
 		}
-
-		response.setData(movimento);
-		return response;
+	
+		return movimento;
 	}
 }
