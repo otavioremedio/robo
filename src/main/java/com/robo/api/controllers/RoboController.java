@@ -5,6 +5,8 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -23,6 +25,8 @@ import com.robo.api.services.RoboService;
 @CrossOrigin(origins = "*")
 public class RoboController {
 
+	private static final Logger log = LoggerFactory.getLogger(RoboController.class);
+
 	@Autowired
 	private RoboService roboService;
 
@@ -37,43 +41,44 @@ public class RoboController {
 		} else {
 			movimentoDto.setPosicaoAtual("0,0,N");
 		}
-		
+
 		//converte em objeto para passar pra camada de serviço
 		Movimento movimento = converteMovimentoDtoParaMovimento(movimentoDto);
+		log.info("Enviando o comando {} para o robo.", movimentoDto.getComando());
 		movimento = this.roboService.moverRobo(movimento);
-		
+
 		//converte para dto para responder a requisicao
 		movimentoDto = converteMovimentoParaMovimentoDto(movimento);
 		httpSession.setAttribute("posicaoAtual", movimentoDto.getPosicaoAtual());
-		
+
 		if(movimentoDto.getErros().size() > 0){
 			return ResponseEntity.badRequest().body(movimentoDto);
 		}
-		
+
 		return ResponseEntity.ok(movimentoDto);
 	}
-	
+
 	@GetMapping(value="/posicao")
 	public ResponseEntity<MovimentoDto> obterPosicaoAtual(HttpSession httpSession){
-		
+
 		MovimentoDto movimentoDto = new MovimentoDto();
-		
+
 		if (Optional.ofNullable(httpSession.getAttribute("posicaoAtual")).isPresent()) {
 			movimentoDto.setPosicaoAtual(httpSession.getAttribute("posicaoAtual").toString());
 		} else {
 			movimentoDto.setPosicaoAtual("0,0,N");
 		}
-		
+
 		return ResponseEntity.ok(movimentoDto);
 	}
-	
+
 	private Movimento converteMovimentoDtoParaMovimento(MovimentoDto movimentoDto){
 		Movimento movimento = new Movimento();
 		movimento.setComando(movimentoDto.getComando());
 		movimento.setPosicaoAtual(movimentoDto.getPosicaoAtual());
 		return movimento;
 	}
-	
+
 	private MovimentoDto converteMovimentoParaMovimentoDto(Movimento movimento){
 		MovimentoDto movimentoDto = new MovimentoDto();
 		movimentoDto.setComando(movimento.getComando());
