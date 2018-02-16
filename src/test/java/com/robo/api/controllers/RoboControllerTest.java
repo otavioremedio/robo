@@ -38,10 +38,11 @@ public class RoboControllerTest {
 	private static final String COMANDO_ROBO_PARADO = "MMMMRLMM";
 	private static final String POSICAO_ESPERADA_ROBO_PARADO = "0,4,N";
 	private static final String COMANDO_NAO_EXECUTADO = "MM";
+	private static final String OBTER_POSICAO = "/rest/mars/posicao";
 
 	@Test
 	public void testeEnviarComandoErrado() throws Exception{
-		BDDMockito.given(this.roboService.moverRobo(Mockito.any(Movimento.class))).willReturn(this.obterDadosResponseComErro());
+		BDDMockito.given(this.roboService.moverRobo(Mockito.any(Movimento.class))).willReturn(this.obterDadosMovimentoComErro());
 
 		mvc.perform(MockMvcRequestBuilders.post(ENVIAR_COMANDO + COMANDO_INVALIDO).accept(MediaType.APPLICATION_JSON))
 			.andDo(print())
@@ -51,7 +52,7 @@ public class RoboControllerTest {
 
 	@Test
 	public void testeEnviarComandoCorretoReceberLocalizacaoCorreta() throws Exception{
-		BDDMockito.given(this.roboService.moverRobo(Mockito.any(Movimento.class))).willReturn(this.obterDadosResponseComSucesso());
+		BDDMockito.given(this.roboService.moverRobo(Mockito.any(Movimento.class))).willReturn(this.obterDadosMovimentoComSucesso());
 
 		mvc.perform(MockMvcRequestBuilders.post(ENVIAR_COMANDO + COMANDO_VALIDO).accept(MediaType.APPLICATION_JSON))
 			.andDo(print())
@@ -62,7 +63,7 @@ public class RoboControllerTest {
 
 	@Test
 	public void testeEnviarComandoCorretoMasRoboPararDevidoFimDaArea() throws Exception{
-		BDDMockito.given(this.roboService.moverRobo(Mockito.any(Movimento.class))).willReturn(this.obterDadosResponseComErroDeRoboParado());
+		BDDMockito.given(this.roboService.moverRobo(Mockito.any(Movimento.class))).willReturn(this.obterDadosMovimentoComErroDeRoboParado());
 
 		mvc.perform(MockMvcRequestBuilders.post(ENVIAR_COMANDO + COMANDO_ROBO_PARADO).accept(MediaType.APPLICATION_JSON))
 			.andDo(print())
@@ -71,8 +72,18 @@ public class RoboControllerTest {
 											   + " A posição atual do robo é " + POSICAO_ESPERADA_ROBO_PARADO))
 			.andExpect(jsonPath("$.posicaoAtual").value(POSICAO_ESPERADA_ROBO_PARADO));
 	}
+	
+	@Test
+	public void testeObterPosicaoAtual() throws Exception{
+		
+		mvc.perform(MockMvcRequestBuilders.get(OBTER_POSICAO).accept(MediaType.APPLICATION_JSON))
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.erros").isEmpty())
+			.andExpect(jsonPath("$.posicaoAtual").isNotEmpty());
+	}
 
-	private Movimento obterDadosResponseComSucesso(){
+	private Movimento obterDadosMovimentoComSucesso(){
 		Movimento movimento = new Movimento();
 		movimento.setPosicaoAtual(POSICAO_ESPERADA);
 
@@ -80,7 +91,7 @@ public class RoboControllerTest {
 	}
 
 
-	private Movimento obterDadosResponseComErro(){
+	private Movimento obterDadosMovimentoComErro(){
 		Movimento movimento = new Movimento();
 		movimento.getErros().add("Comando inválido. Digite no máximo 4 movimentos sequenciais (M) e no máximo 2 rotações sequenciais (L ou R).");
 		movimento.getPosicaoAtual();
@@ -88,7 +99,7 @@ public class RoboControllerTest {
 		return movimento;
 	}
 
-	private Movimento obterDadosResponseComErroDeRoboParado(){
+	private Movimento obterDadosMovimentoComErroDeRoboParado(){
 		Movimento movimento = new Movimento();
 		movimento.getErros().add("O robo parou pois estava saindo da área permitida. O trecho final do comando (" + COMANDO_NAO_EXECUTADO + ") não foi executado."
 										+ " A posição atual do robo é " + POSICAO_ESPERADA_ROBO_PARADO);
